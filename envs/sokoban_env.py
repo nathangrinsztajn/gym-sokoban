@@ -18,10 +18,11 @@ class SokobanEnv(gym.Env):
                  max_steps=120,
                  num_boxes=4,
                  num_gen_steps=None,
-                 collisions_penalty=0,
                  reset=True,
-                 fixed=False,
-                 tiny=False):
+                 # collisions_penalty=0,
+                 # fixed=False,
+                 # tiny=False,
+                 ):
 
         # General Configuration
         self.dim_room = dim_room
@@ -39,7 +40,7 @@ class SokobanEnv(gym.Env):
         self.reward_box_on_target = 1
         self.reward_finished = 10
         self.reward_last = 0
-        self.penalty_for_collisions = collisions_penalty
+        # self.penalty_for_collisions = collisions_penalty
 
         # Other Settings
         self.tiny = tiny
@@ -47,14 +48,14 @@ class SokobanEnv(gym.Env):
         self.max_steps = max_steps
         self.action_space = Discrete(len(ACTION_LOOKUP))
 
-        if not self.tiny:
-            screen_height, screen_width = (dim_room[0] * 16, dim_room[1] * 16)
-        else:
-            screen_height, screen_width = (dim_room[0], dim_room[1])
+        # if not self.tiny:
+        #     screen_height, screen_width = (dim_room[0] * 16, dim_room[1] * 16)
+        # else:
+        screen_height, screen_width = (dim_room[0], dim_room[1])
 
         self.observation_space = Box(low=0, high=255, shape=(screen_height, screen_width, 3), dtype=np.uint8)
 
-        self.fixed = fixed
+        # self.fixed = fixed
 
         if reset:
             # Initialize Room
@@ -69,8 +70,8 @@ class SokobanEnv(gym.Env):
 
     def step(self, action, observation_mode='rgb_array'):
 
-        if self.tiny:
-            observation_mode = 'tiny_rgb_array'
+        # if self.tiny:
+        #     observation_mode = 'tiny_rgb_array'
 
         assert action in ACTION_LOOKUP
         assert observation_mode in ['rgb_array', 'tiny_rgb_array', 'raw']
@@ -176,12 +177,12 @@ class SokobanEnv(gym.Env):
 
         return False
 
-    def _calc_ball_on_walls(self):
-        collisions = np.sum((self.room_state == 4) & (np.roll(self.room_state, 1, axis=0) == 0))
-        collisions += np.sum((self.room_state == 4) & (np.roll(self.room_state, -1, axis=0) == 0))
-        collisions += np.sum((self.room_state == 4) & (np.roll(self.room_state, 1, axis=1) == 0))
-        collisions += np.sum((self.room_state == 4) & (np.roll(self.room_state, -1, axis=1) == 0))
-        return collisions
+    # def _calc_ball_on_walls(self):
+    #     collisions = np.sum((self.room_state == 4) & (np.roll(self.room_state, 1, axis=0) == 0))
+    #     collisions += np.sum((self.room_state == 4) & (np.roll(self.room_state, -1, axis=0) == 0))
+    #     collisions += np.sum((self.room_state == 4) & (np.roll(self.room_state, 1, axis=1) == 0))
+    #     collisions += np.sum((self.room_state == 4) & (np.roll(self.room_state, -1, axis=1) == 0))
+    #     return collisions
 
     def _calc_reward(self):
         """
@@ -233,8 +234,8 @@ class SokobanEnv(gym.Env):
 
     def reset(self, second_player=False, render_mode='rgb_array'):
 
-        if self.tiny:
-            render_mode = 'tiny_rgb_array'
+        # if self.tiny:
+        #     render_mode = 'tiny_rgb_array'
 
         if self.fixed:
             self.room_fixed, self.room_state, self.box_mapping = generate_fixed_room()
@@ -255,7 +256,7 @@ class SokobanEnv(gym.Env):
         self.num_env_steps = 0
         self.reward_last = 0
         self.boxes_on_target = 0
-        self.current_collisions = self._calc_ball_on_walls()
+        # self.current_collisions = self._calc_ball_on_walls()
 
         starting_observation = self.render(render_mode)
         return starting_observation
