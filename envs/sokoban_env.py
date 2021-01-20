@@ -25,13 +25,11 @@ class SokobanEnv(gym.Env):
                  ):
 
         # General Configuration
-        self.dim_room = dim_room
         if num_gen_steps == None:
             self.num_gen_steps = int(1.7 * (dim_room[0] + dim_room[1]))
         else:
             self.num_gen_steps = num_gen_steps
 
-        self.num_boxes = num_boxes
         self.boxes_on_target = 0
 
         # Penalties and Rewards
@@ -47,15 +45,28 @@ class SokobanEnv(gym.Env):
         self.viewer = None
         self.max_steps = max_steps
         self.action_space = Discrete(len(ACTION_LOOKUP))
-
-        if not self.tiny:
-            screen_height, screen_width = (dim_room[0] * 16, dim_room[1] * 16)
-        else:
-            screen_height, screen_width = (dim_room[0], dim_room[1])
-
-        self.observation_space = Box(low=0, high=255, shape=(screen_height, screen_width, 3), dtype=np.uint8)
-
         self.fixed = fixed
+
+        if self.fixed:
+            self.room_fixed, self.room_state, self.box_mapping = generate_fixed_room()
+            self.num_boxes = (self.room_fixed == 2).sum()
+            dim_room = self.room_fixed.shape
+            self.dim_room = dim_room
+            if not self.tiny:
+                screen_height, screen_width = (dim_room[0] * 16, dim_room[1] * 16)
+            else:
+                screen_height, screen_width = (dim_room[0], dim_room[1])
+
+            self.observation_space = Box(low=0, high=255, shape=(screen_height, screen_width, 3), dtype=np.uint8)
+        else:
+            self.dim_room = dim_room
+            self.num_boxes = num_boxes
+            if not self.tiny:
+                screen_height, screen_width = (dim_room[0] * 16, dim_room[1] * 16)
+            else:
+                screen_height, screen_width = (dim_room[0], dim_room[1])
+
+            self.observation_space = Box(low=0, high=255, shape=(screen_height, screen_width, 3), dtype=np.uint8)
 
         if reset:
             # Initialize Room
