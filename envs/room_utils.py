@@ -367,6 +367,7 @@ def box_displacement_score(box_mapping):
     return score
 
 
+
 TYPE_LOOKUP = {
     0: 'wall',
     1: 'empty space',
