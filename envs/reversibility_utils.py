@@ -1,3 +1,5 @@
+import numpy as np
+
 def _calc_ball_on_walls(s):
     balls_pos = (s == 4) + (s == 3)
 
